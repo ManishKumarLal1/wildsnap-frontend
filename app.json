@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "WildSnap",
-    "slug": "wildsnap",
+    "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -46,6 +46,7 @@
       "eas": {
         "projectId": "132c5ba4-2614-4fb8-98d3-8af58110bc67"
       }
-    }
+    },
+    "owner": "manishkrlal"
   }
 }

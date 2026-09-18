@@ -1,56 +1,482 @@
-# Welcome to your Expo app 👋
+# 🦋 WildSnap
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+> **Explore. Capture. Discover.**
 
-## Get started
+WildSnap is a wildlife exploration mobile application built with **React Native and Expo**. It turns wildlife observation into an interactive experience where users can photograph species, identify them using AI, earn XP, build their collection, and compete on leaderboards.
 
-1. Install dependencies
+The goal is to encourage people to explore and learn about wildlife while making species discovery engaging and rewarding.
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## ✨ Features
 
-   ```bash
-   npx expo start
-   ```
+### 📸 Wildlife Observation
 
-In the output, you'll find options to open the app in a
+* Capture wildlife photographs directly from the app.
+* Review photographs before submitting an observation.
+* Upload observation images to the backend.
+* Track previously submitted observations.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 🤖 AI-Powered Species Identification
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+WildSnap uses AI to analyze wildlife photographs and identify the observed species.
 
-## Get a fresh project
+The analysis provides:
 
-When you're ready, run:
+* Species name
+* Scientific name
+* Confidence score
+* Species category
+* Rarity
+* XP reward
 
-```bash
-npm run reset-project
+### 🛡️ Image Verification
+
+WildSnap includes a second-stage verification process designed to detect potentially invalid observations, including:
+
+* AI-generated images
+* Copied/reused images
+* Potentially invalid wildlife observations
+
+This helps maintain the integrity of the wildlife collection and leaderboard.
+
+### 🦚 Species Collection
+
+Users can build their personal wildlife collection by discovering different species.
+
+Each species can contain:
+
+* Common name
+* Scientific name
+* Category
+* Rarity
+* XP
+* Discovery information
+
+### 🏆 XP & Progression
+
+Users earn XP from wildlife discoveries.
+
+The app includes:
+
+* XP progression
+* Levels
+* Rarity-based rewards
+* First-discovery rewards
+* Observation history
+
+### 🔥 Daily Streak
+
+Users can maintain a daily exploration streak by making observations.
+
+### 🌎 Leaderboards
+
+WildSnap supports competitive progression through leaderboards, including:
+
+* Global rankings
+* Local rankings
+* XP-based progression
+
+### 👤 User Profiles
+
+Profiles provide an overview of the user's wildlife exploration progress, including:
+
+* Username
+* Level
+* XP
+* Species discovered
+* Observation count
+* Current streak
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* **React Native**
+* **Expo**
+* **Expo Router**
+* **TypeScript**
+* **Zustand**
+* **Axios**
+* **Expo Camera**
+* **Expo Image Picker**
+* **Ionicons**
+* **Tailwind / Native styling**
+
+### Backend
+
+* **Node.js**
+* **Express.js**
+* **PostgreSQL**
+* **JWT Authentication**
+* **bcrypt**
+* **Cloudinary**
+* **Groq API**
+* **Resend**
+
+### Infrastructure
+
+* **GitHub** — Source control
+* **Render** — Backend hosting
+* **Aiven** — PostgreSQL database
+* **Cloudinary** — Image storage
+
+---
+
+## 📱 Application Flow
+
+```text
+User
+ │
+ ▼
+Camera
+ │
+ ▼
+Review Observation
+ │
+ ▼
+Upload Image
+ │
+ ▼
+AI Species Identification
+ │
+ ├── Species
+ ├── Scientific Name
+ ├── Confidence
+ ├── Rarity
+ └── XP
+ │
+ ▼
+Image Verification
+ │
+ ▼
+Observation Result
+ │
+ ├── Collection
+ ├── XP / Level
+ ├── Streak
+ └── Leaderboard
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-### Other setup steps
+## 🚀 Getting Started
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### Prerequisites
 
-## Learn more
+Make sure you have installed:
 
-To learn more about developing your project with Expo, look at the following resources:
+* Node.js
+* npm
+* Git
+* Expo CLI / Expo development environment
+* Android Studio if using an Android emulator
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+### 1. Clone the repository
 
-Join our community of developers creating universal apps.
+```bash
+git clone https://github.com/ManishKumarLal1/wildsnap-frontend.git
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Then:
+
+```bash
+cd wildsnap-frontend
+```
+
+---
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+---
+
+### 3. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```env
+EXPO_PUBLIC_API_URL=https://YOUR-RENDER-BACKEND-URL.onrender.com/api
+```
+
+Replace the URL with the deployed WildSnap backend URL.
+
+> **Important:** Never commit `.env` to GitHub. A `.env.example` file can be used as a template.
+
+---
+
+### 4. Start the Expo development server
+
+```bash
+npx expo start
+```
+
+You can then open the application using:
+
+* Android emulator
+* Physical Android device
+* Expo development build
+
+---
+
+## 📂 Project Structure
+
+```text
+wildsnap-frontend/
+│
+├── app/
+│   ├── (auth)/
+│   ├── (tabs)/
+│   ├── observation/
+│   └── species/
+│
+├── assets/
+│   └── images/
+│
+├── src/
+│   ├── api/
+│   ├── components/
+│   ├── context/
+│   ├── screens/
+│   ├── store/
+│   ├── theme/
+│   ├── types/
+│   └── utils/
+│
+├── .env.example
+├── app.json
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+---
+
+## 🔐 Authentication
+
+WildSnap uses token-based authentication.
+
+The authentication system supports:
+
+* User registration
+* Login
+* JWT authentication
+* Password reset
+* Protected API requests
+* Persistent authentication state
+
+---
+
+## 🌐 Backend
+
+The WildSnap frontend communicates with a separate backend API.
+
+Backend repository:
+
+**WildSnap Backend**
+
+https://github.com/ManishKumarLal1/wildsnap-backend
+
+The backend is responsible for:
+
+* Authentication
+* User management
+* Species data
+* Observation management
+* Image uploads
+* AI analysis
+* Image verification
+* XP and progression
+* PostgreSQL database operations
+
+---
+
+## 🗄️ Database
+
+WildSnap uses **PostgreSQL** for persistent application data.
+
+The database contains information related to:
+
+* Users
+* Species
+* User species collections
+* Observations
+* Image metadata
+* Discovery information
+
+---
+
+## ☁️ Image Storage
+
+Wildlife observation images are stored using **Cloudinary**.
+
+The application stores Cloudinary information alongside observation records so uploaded images can be retrieved and managed through the backend.
+
+---
+
+## 🧠 AI Processing
+
+WildSnap uses a two-stage approach for wildlife observations:
+
+### Stage 1 — Species Identification
+
+The uploaded image is analyzed to determine:
+
+```text
+Species
+Scientific Name
+Category
+Confidence
+Rarity
+XP
+```
+
+### Stage 2 — Image Verification
+
+The observation image is additionally checked for potential:
+
+```text
+AI-generated content
+Copied/reused images
+Invalid observations
+```
+
+The verification stage is intended to improve the quality and reliability of observations submitted to the platform.
+
+---
+
+## 🎮 Progression System
+
+WildSnap uses XP and rarity to make species discovery more engaging.
+
+Species can have one of the following rarity levels:
+
+```text
+Common
+Uncommon
+Rare
+Epic
+Legendary
+```
+
+Discoveries contribute XP toward the user's level.
+
+---
+
+## 🧪 Development
+
+Run the development server with:
+
+```bash
+npx expo start
+```
+
+For Android:
+
+```bash
+npx expo start --android
+```
+
+Clear the Expo cache if necessary:
+
+```bash
+npx expo start -c
+```
+
+---
+
+## 📦 Building the App
+
+For an Android build using EAS:
+
+```bash
+eas build --platform android
+```
+
+For a preview build:
+
+```bash
+eas build --platform android --profile preview
+```
+
+---
+
+## 🔒 Security
+
+Do not commit sensitive credentials to GitHub.
+
+Never commit:
+
+```text
+.env
+API keys
+JWT secrets
+Cloudinary secrets
+Database passwords
+Service account credentials
+```
+
+The frontend should only contain public configuration such as:
+
+```env
+EXPO_PUBLIC_API_URL=...
+```
+
+Backend secrets must remain configured through the hosting provider's environment variables.
+
+---
+
+## 🗺️ Roadmap
+
+Future improvements may include:
+
+* [ ] Improved wildlife species recognition
+* [ ] Stronger image verification
+* [ ] Wildlife habitat information
+* [ ] Location-based discoveries
+* [ ] Local wildlife challenges
+* [ ] Advanced leaderboards
+* [ ] Achievement system
+* [ ] More detailed species profiles
+* [ ] Offline observation support
+* [ ] Push notifications
+* [ ] Production Android release
+* [ ] iOS release
+
+---
+
+## 👨‍💻 Author
+
+**Manish Kumar Lal**
+
+B.Tech — Computer Science & Engineering
+
+GitHub:
+https://github.com/ManishKumarLal1
+
+---
+
+## 📄 License
+
+This project is currently under development.
+
+License information will be added when the project is prepared for public distribution.
+
+---
+
+⭐ If you find WildSnap interesting, consider starring the repository and following the project as it develops.
+
+## 📱 Download APK
+
+You can download and install the latest Android APK from Expo:
+
+**[Download WildSnap APK]https://expo.dev/accounts/manishkrlal/projects/frontend/builds/497646f2-d17b-4ce3-b209-b596c1388671**
+
+> Download the APK on an Android device and install it to try WildSnap.
