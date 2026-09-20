@@ -477,6 +477,6 @@ License information will be added when the project is prepared for public distri
 
 You can download and install the latest Android APK from Expo:
 
-**[Download WildSnap APK]https://expo.dev/accounts/manishkrlal/projects/frontend/builds/497646f2-d17b-4ce3-b209-b596c1388671**
+**[Download WildSnap APK]https://expo.dev/accounts/manishkrlal/projects/frontend/builds/4cb752e0-4f67-4c84-9859-abbbbc0ca18f**
 
 > Download the APK on an Android device and install it to try WildSnap.
