@@ -4,26 +4,27 @@
     "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+
+    "icon": "./assets/images/WildSnap_3.png",
+
     "scheme": "wildsnap",
+
     "userInterfaceStyle": "automatic",
+
     "ios": {
       "icon": "./assets/images/WildSnap_3.png"
     },
+
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      },
       "predictiveBackGestureEnabled": false,
       "package": "com.manishkrlal.frontend"
     },
+
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/WildSnap_3.png"
     },
+
     "plugins": [
       "expo-router",
       [
@@ -37,16 +38,19 @@
       "expo-font",
       "expo-image"
     ],
+
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
+
     "extra": {
       "router": {},
       "eas": {
         "projectId": "132c5ba4-2614-4fb8-98d3-8af58110bc67"
       }
     },
+
     "owner": "manishkrlal"
   }
 }
