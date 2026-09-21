@@ -1,27 +1,28 @@
+
 import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+    type ReactNode,
 } from "react";
 
 import {
-  login as loginApi,
-  register as registerApi,
-  getMe,
-  logout as logoutApi,
-  type AuthUser,
+    getMe,
+    login as loginApi,
+    logout as logoutApi,
+    register as registerApi,
+    type AuthUser,
 } from "@/api/auth";
 
 import {
-  getToken,
-  saveToken,
-  removeToken,
+    getToken,
+    removeToken,
+    saveToken,
 } from "@/storage/authStorage";
 
-import { useUserStore } from "@/store/userStore";
 import { getMyCollection } from "@/api/collection";
+import { useUserStore } from "@/store/userStore";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -29,13 +30,12 @@ interface AuthContextType {
   loading: boolean;
 
   login: (
-    identifier: string,
+    username: string,
     password: string
   ) => Promise<void>;
 
   register: (
     username: string,
-    email: string,
     password: string
   ) => Promise<void>;
 
@@ -63,30 +63,45 @@ export function AuthProvider({
 
   const userStore = useUserStore();
 
-  const loadCollection = async () => {
-  try {
-    const collection = await getMyCollection();
+  const updateUserStore = (user: AuthUser) => {
+    userStore.setUser({
+      id: user.id,
+      username: user.username,
+      avatar: user.avatar,
+      xp: user.xp,
+      level: user.level,
+      speciesDiscovered: 0,
+      streak: user.streak,
+      lastObservationDate:
+        user.last_observation_date ?? null,
+      location: user.location || "",
+    });
+  };
 
-    userStore.setCollection(
-      collection.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        scientificName: item.scientific_name,
-        category: item.category,
-        rarity: item.rarity,
-        emoji: "🦜",
-        discovered: true,
-        discoveryCount: item.discovery_count,
-        xp: item.base_xp,
-      }))
-    );
-  } catch (error) {
-    console.error(
-      "Failed to load collection:",
-      error
-    );
-  }
-};
+  const loadCollection = async () => {
+    try {
+      const collection = await getMyCollection();
+
+      userStore.setCollection(
+        collection.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          scientificName: item.scientific_name,
+          category: item.category,
+          rarity: item.rarity,
+          emoji: "🦜",
+          discovered: true,
+          discoveryCount: item.discovery_count,
+          xp: item.base_xp,
+        }))
+      );
+    } catch (error) {
+      console.error(
+        "Failed to load collection:",
+        error
+      );
+    }
+  };
 
   useEffect(() => {
     restoreSession();
@@ -103,25 +118,13 @@ export function AuthProvider({
         return;
       }
 
-      const result =
-        await getMe(storedToken);
+      const result = await getMe(storedToken);
 
       setToken(storedToken);
       setUserState(result.user);
 
-      userStore.setUser({
-        id: result.user.id,
-        username: result.user.username,
-        avatar: result.user.avatar,
-        xp: result.user.xp,
-        level: result.user.level,
-        speciesDiscovered: 0,
-        streak: result.user.streak,
-        lastObservationDate:
-          result.user.last_observation_date ?? null,
-        location:
-          result.user.location || "",
-      });
+      updateUserStore(result.user);
+
       await loadCollection();
     } catch (error) {
       console.log(
@@ -141,11 +144,11 @@ export function AuthProvider({
    * Login
    */
   const login = async (
-    identifier: string,
+    username: string,
     password: string
   ) => {
     const result = await loginApi(
-      identifier,
+      username,
       password
     );
 
@@ -154,19 +157,8 @@ export function AuthProvider({
     setToken(result.token);
     setUserState(result.user);
 
-    userStore.setUser({
-      id: result.user.id,
-      username: result.user.username,
-      avatar: result.user.avatar,
-      xp: result.user.xp,
-      level: result.user.level,
-      speciesDiscovered: 0,
-      streak: result.user.streak,
-      lastObservationDate:
-        result.user.last_observation_date ?? null,
-      location:
-        result.user.location || "",
-    });
+    updateUserStore(result.user);
+
     await loadCollection();
   };
 
@@ -175,18 +167,22 @@ export function AuthProvider({
    */
   const register = async (
     username: string,
-    email: string,
     password: string
   ) => {
-    await registerApi(
+    const result = await registerApi(
       username,
-      email,
       password
     );
 
-    // IMPORTANT:
-    // Registration does NOT log the user in.
-    // User must verify email first.
+    // Registration now creates an authenticated session
+    await saveToken(result.token);
+
+    setToken(result.token);
+    setUserState(result.user);
+
+    updateUserStore(result.user);
+
+    await loadCollection();
   };
 
   /*
@@ -208,8 +204,6 @@ export function AuthProvider({
       setUserState(null);
     }
   };
-
-  
 
   return (
     <AuthContext.Provider

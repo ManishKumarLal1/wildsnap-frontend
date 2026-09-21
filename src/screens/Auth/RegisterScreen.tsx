@@ -11,7 +11,9 @@ import {
 } from "react-native";
 
 import { useState } from "react";
+
 import { router } from "expo-router";
+
 import { Ionicons } from "@expo/vector-icons";
 
 import { Toast } from "@/utils/toast";
@@ -22,11 +24,12 @@ import { Spacing } from "@/theme/spacing";
 import { Radius } from "@/theme/radius";
 import { Shadows } from "@/theme/shadows";
 
-import { register } from "@/api/auth";
+import { useAuth } from "@/context/AuthContext";
 
 export default function RegisterScreen() {
+  const { register: registerUser } = useAuth();
+
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] =
     useState("");
@@ -45,10 +48,7 @@ export default function RegisterScreen() {
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     number: /[0-9]/.test(password),
-    special:
-      /[!@#$%^&*(),.?":{}|<>_\-\\[\]~`+=;'/]/.test(
-        password
-      ),
+    special: /[^A-Za-z0-9\s]/.test(password),
     noSpaces: !/\s/.test(password),
   };
 
@@ -62,12 +62,13 @@ export default function RegisterScreen() {
 
   const isFormValid =
     username.trim().length >= 3 &&
-    email.trim().length > 0 &&
     passwordValid &&
     passwordsMatch;
 
   const handleRegister = async () => {
-    if (!username.trim()) {
+    const trimmedUsername = username.trim();
+
+    if (!trimmedUsername) {
       Toast.error(
         "Username Required",
         "Please enter a username."
@@ -75,18 +76,10 @@ export default function RegisterScreen() {
       return;
     }
 
-    if (username.trim().length < 3) {
+    if (trimmedUsername.length < 3) {
       Toast.error(
         "Invalid Username",
         "Username must be at least 3 characters long."
-      );
-      return;
-    }
-
-    if (!email.trim()) {
-      Toast.error(
-        "Email Required",
-        "Please enter your email address."
       );
       return;
     }
@@ -110,20 +103,21 @@ export default function RegisterScreen() {
     try {
       setLoading(true);
 
-      await register(
-        username.trim(),
-        email.trim().toLowerCase(),
+      await registerUser(
+        trimmedUsername,
         password
       );
 
       Toast.success(
         "Account Created 🎉",
-        "Please check your email to verify your account."
+        "Welcome to WildSnap!"
       );
 
-      setTimeout(() => {
-        router.replace("/(auth)/login");
-      }, 1200);
+      // AuthContext has already saved the token
+      // and updated the authenticated user state.
+      // The auth/layout flow can now take the user
+      // into the app.
+
     } catch (error: any) {
       console.error(
         "Registration error:",
@@ -161,7 +155,8 @@ export default function RegisterScreen() {
         <View
           style={[
             styles.requirementIcon,
-            valid && styles.requirementIconValid,
+            valid &&
+              styles.requirementIconValid,
           ]}
         >
           <Ionicons
@@ -261,34 +256,6 @@ export default function RegisterScreen() {
               )}
           </View>
 
-          {/* Email */}
-          <View style={styles.field}>
-            <Text style={styles.label}>
-              Email
-            </Text>
-
-            <View style={styles.inputContainer}>
-              <Ionicons
-                name="mail-outline"
-                size={19}
-                color={Colors.textMuted}
-              />
-
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Enter your email address"
-                placeholderTextColor={
-                  Colors.textMuted
-                }
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                style={styles.input}
-              />
-            </View>
-          </View>
-
           {/* Password */}
           <View style={styles.field}>
             <Text style={styles.label}>
@@ -337,14 +304,20 @@ export default function RegisterScreen() {
 
             {/* Password Requirements */}
             <View style={styles.requirements}>
-              <View style={styles.requirementsHeader}>
+              <View
+                style={styles.requirementsHeader}
+              >
                 <Ionicons
                   name="shield-checkmark-outline"
                   size={17}
                   color={Colors.textSecondary}
                 />
 
-                <Text style={styles.requirementsTitle}>
+                <Text
+                  style={
+                    styles.requirementsTitle
+                  }
+                >
                   Password requirements
                 </Text>
               </View>
@@ -430,9 +403,7 @@ export default function RegisterScreen() {
             </View>
 
             {confirmPassword.length > 0 && (
-              <View
-                style={styles.passwordStatus}
-              >
+              <View style={styles.passwordStatus}>
                 <Ionicons
                   name={
                     passwordsMatch
@@ -474,7 +445,7 @@ export default function RegisterScreen() {
                 styles.buttonPressed,
             ]}
             onPress={handleRegister}
-            disabled={loading}
+            disabled={!isFormValid || loading}
           >
             {loading ? (
               <ActivityIndicator
@@ -503,7 +474,9 @@ export default function RegisterScreen() {
 
             <Pressable
               onPress={() =>
-                router.replace("/(auth)/login")
+                router.replace(
+                  "/(auth)/login"
+                )
               }
             >
               <Text style={styles.loginLink}>
