@@ -1,63 +1,15 @@
-import api from "./client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export interface AuthUser {
-  id: string;
-  username: string;
-  avatar: string;
-  xp: number;
-  level: number;
-  streak: number;
-  last_observation_date?: string | null;
-  location?: string | null;
-  created_at: string;
-  updated_at: string;
+const TOKEN_KEY = "@wildlife_auth_token";
+
+export async function saveToken(token: string) {
+  await AsyncStorage.setItem(TOKEN_KEY, token);
 }
 
-export interface LoginResponse {
-  message: string;
-  user: AuthUser;
-  token: string;
+export async function getToken() {
+  return AsyncStorage.getItem(TOKEN_KEY);
 }
 
-export interface RegisterResponse {
-  message: string;
-  user: AuthUser;
-  token: string;
+export async function removeToken() {
+  await AsyncStorage.removeItem(TOKEN_KEY);
 }
-
-export async function register(
-  username: string,
-  password: string
-): Promise<RegisterResponse> {
-  const response = await api.post("/auth/register", {
-    username,
-    password,
-  });
-
-  return response.data;
-}
-
-export async function login(
-  username: string,
-  password: string
-): Promise<LoginResponse> {
-  const response = await api.post("/auth/login", {
-    username,
-    password,
-  });
-
-  return response.data;
-}
-
-export async function getMe() {
-  const response = await api.get("/auth/me");
-
-  return response.data;
-}
-
-export async function logout() {
-  const response = await api.post("/auth/logout");
-
-  return response.data;
-}
-
