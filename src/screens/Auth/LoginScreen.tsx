@@ -23,25 +23,21 @@ import { Radius } from "@/theme/radius";
 import { Shadows } from "@/theme/shadows";
 
 import { useAuth } from "@/context/AuthContext";
-import { resendVerification } from "@/api/auth";
 
 export default function LoginScreen() {
   const { login } = useAuth();
 
-  const [identifier, setIdentifier] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const [showResend, setShowResend] = useState(false);
-  const [resendLoading, setResendLoading] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
-    if (!identifier.trim() || !password) {
+    if (!username.trim() || !password) {
       Toast.error(
         "Missing Information",
-        "Please enter your username/email and password."
+        "Please enter your username and password."
       );
 
       return;
@@ -50,9 +46,7 @@ export default function LoginScreen() {
     try {
       setLoading(true);
 
-      await login(identifier.trim(), password);
-
-      setShowResend(false);
+      await login(username.trim(), password);
 
       console.log("Login successful");
     } catch (error: any) {
@@ -65,52 +59,9 @@ export default function LoginScreen() {
         error?.response?.data?.message ||
         "Unable to login. Please try again.";
 
-      const emailNotVerified =
-        error?.response?.status === 403;
-
-      setShowResend(emailNotVerified);
-
       Toast.error("Login Failed", message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleResendVerification = async () => {
-    if (!identifier.trim()) {
-      Toast.error(
-        "Missing Information",
-        "Enter your username or email first."
-      );
-
-      return;
-    }
-
-    try {
-      setResendLoading(true);
-
-      const result = await resendVerification(
-        identifier.trim()
-      );
-
-      Toast.success(
-        "Email Sent",
-        result?.message ||
-          "Verification email has been sent."
-      );
-    } catch (error: any) {
-      console.error(
-        "Resend verification error:",
-        error?.response?.data || error?.message
-      );
-
-      Toast.error(
-        "Unable to Send Email",
-        error?.response?.data?.message ||
-          "Unable to resend the verification email. Please try again."
-      );
-    } finally {
-      setResendLoading(false);
     }
   };
 
@@ -149,10 +100,10 @@ export default function LoginScreen() {
 
         {/* Form */}
         <View style={styles.form}>
-          {/* Username / Email */}
+          {/* Username */}
           <View style={styles.field}>
             <Text style={styles.label}>
-              Username or Email
+              Username
             </Text>
 
             <View style={styles.inputContainer}>
@@ -163,9 +114,9 @@ export default function LoginScreen() {
               />
 
               <TextInput
-                value={identifier}
-                onChangeText={setIdentifier}
-                placeholder="Enter your username or email"
+                value={username}
+                onChangeText={setUsername}
+                placeholder="Enter your username"
                 placeholderTextColor={Colors.textMuted}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -219,18 +170,6 @@ export default function LoginScreen() {
             </View>
           </View>
 
-          {/* Forgot Password */}
-          <Pressable
-            style={styles.forgotButton}
-            onPress={() =>
-              router.push("/forgot-password")
-            }
-          >
-            <Text style={styles.forgot}>
-              Forgot Password?
-            </Text>
-          </Pressable>
-
           {/* Login */}
           <Pressable
             style={({ pressed }) => [
@@ -261,46 +200,6 @@ export default function LoginScreen() {
               </>
             )}
           </Pressable>
-
-          {/* Resend Verification */}
-          {showResend && (
-            <View style={styles.resendCard}>
-              <View style={styles.resendIcon}>
-                <Ionicons
-                  name="mail-outline"
-                  size={19}
-                  color={Colors.primary}
-                />
-              </View>
-
-              <View style={styles.resendContent}>
-                <Text style={styles.resendTitle}>
-                  Email not verified
-                </Text>
-
-                <Text style={styles.resendDescription}>
-                  Verify your email to continue.
-                </Text>
-
-                <Pressable
-                  onPress={handleResendVerification}
-                  disabled={resendLoading}
-                  style={styles.resendButton}
-                >
-                  {resendLoading ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={Colors.primary}
-                    />
-                  ) : (
-                    <Text style={styles.resend}>
-                      Resend verification email
-                    </Text>
-                  )}
-                </Pressable>
-              </View>
-            </View>
-          )}
         </View>
 
         {/* Register */}
@@ -403,17 +302,6 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
   },
 
-  forgotButton: {
-    alignSelf: "flex-end",
-    marginTop: -Spacing.sm,
-    marginBottom: Spacing.lg,
-  },
-
-  forgot: {
-    color: Colors.primary,
-    ...Typography.captionMedium,
-  },
-
   button: {
     minHeight: 54,
     backgroundColor: Colors.primary,
@@ -440,52 +328,6 @@ const styles = StyleSheet.create({
     ...Typography.button,
   },
 
-  resendCard: {
-    flexDirection: "row",
-    backgroundColor: Colors.surface,
-    borderRadius: Radius.card,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    padding: Spacing.card,
-    marginTop: Spacing.lg,
-    gap: Spacing.md,
-    ...Shadows.small,
-  },
-
-  resendIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceLight,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  resendContent: {
-    flex: 1,
-  },
-
-  resendTitle: {
-    color: Colors.text,
-    ...Typography.bodyMedium,
-  },
-
-  resendDescription: {
-    color: Colors.textSecondary,
-    ...Typography.caption,
-    marginTop: Spacing.xs,
-  },
-
-  resendButton: {
-    alignSelf: "flex-start",
-    marginTop: Spacing.sm,
-  },
-
-  resend: {
-    color: Colors.primary,
-    ...Typography.captionMedium,
-  },
-
   registerSection: {
     alignItems: "center",
     marginTop: Spacing.xxxl,
@@ -502,3 +344,4 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
 });
+

@@ -3,7 +3,6 @@ import api from "./client";
 export interface AuthUser {
   id: string;
   username: string;
-  email: string;
   avatar: string;
   xp: number;
   level: number;
@@ -23,16 +22,15 @@ export interface LoginResponse {
 export interface RegisterResponse {
   message: string;
   user: AuthUser;
+  token: string;
 }
 
 export async function register(
   username: string,
-  email: string,
   password: string
 ): Promise<RegisterResponse> {
   const response = await api.post("/auth/register", {
     username,
-    email,
     password,
   });
 
@@ -40,26 +38,13 @@ export async function register(
 }
 
 export async function login(
-  identifier: string,
+  username: string,
   password: string
 ): Promise<LoginResponse> {
   const response = await api.post("/auth/login", {
-    identifier,
+    username,
     password,
   });
-
-  return response.data;
-}
-
-export async function resendVerification(
-  identifier: string
-) {
-  const response = await api.post(
-    "/auth/resend-verification",
-    {
-      identifier,
-    }
-  );
 
   return response.data;
 }
@@ -88,22 +73,3 @@ export async function logout(token: string) {
   return response.data;
 }
 
-export async function forgotPassword(email: string) {
-  const response = await api.post("/auth/forgot-password", {
-    email,
-  });
-
-  return response.data;
-}
-
-export async function resetPassword(
-  token: string,
-  password: string
-) {
-  const response = await api.post("/auth/reset-password", {
-    token,
-    password,
-  });
-
-  return response.data;
-}
